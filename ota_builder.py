@@ -83,18 +83,20 @@ def build_ota(
     build_dir="build_prod",
     header_string=None,
     include_dirs=None,
-    ota_output_dir=None,  # remove from call if not provided
+    ota_output_dir=None,
+    ota_filename=None,
 ):
     # Resolve paths
     project_path = os.path.abspath(os.path.dirname(project_path))
-    print("project_path",project_path)
     config_h = os.path.join(project_path, config_h_rel)
-    print("config_h",config_h)
     build_dir = os.path.join(project_path, build_dir)
-    print("build_dir",build_dir)
 
     if include_dirs is None:
         include_dirs = []
+
+    # Determine OTA output filename
+    if ota_filename is None:
+        ota_filename = project_name  # fallback for backward compatibility
 
     # If OTA output folder not given, use the folder where this script sits
     if ota_output_dir is None:
@@ -102,7 +104,7 @@ def build_ota(
 
     # Ensure build_dir exists
     bin_file = os.path.join(build_dir, f"{project_name}.bin")
-    ota_file = os.path.join(ota_output_dir, f"{project_name}.ota")
+    ota_file = os.path.join(ota_output_dir, f"{ota_filename}.ota")
 
     if not os.path.exists(bin_file):
         raise FileNotFoundError(f"{bin_file} not found. Run `idf.py build` first.")
